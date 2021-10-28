@@ -35,11 +35,11 @@ export const Navbar = props => {
           display={{ md: 'none' }}
           onClick={isOpen ? onClose : onOpen}
         />
-        <HStack spacing={8} alignItems={'center'}>
+        <HStack ml={2} spacing={8} alignItems={'center'}>
           <Image
-            maxH="8vh"
+            maxH="6vh"
             src={require('../../assets/logo.png').default}
-          ></Image>
+          />
         </HStack>
         <Flex alignItems={'center'}>
           <ColorModeSwitcher
