@@ -23,12 +23,28 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import ReactStars from 'react-rating-stars-component';
 
-export const Home = ({ data, columns }) => {
+export const Home = ({ data }) => {
   const [menuOption, setMenuOption] = useState('All');
+  const [searchText, setSearchText] = useState();
+  const [dataRows, setDataRows] = useState(data);
 
   useEffect(() => {
-   console.log("Data on home: ", data);
-  }, [data])
+    setDataRows(data);
+  }, [data]);
+
+  const handleSearch = e => {
+    setSearchText(e.target.value);
+  };
+
+  const getButtonText = value => {
+    var temp;
+    if (value !== 'All') {
+      value === 'true' ? (temp = 'Active') : (temp = 'Inactive');
+    } else {
+      temp = 'All';
+    }
+    return temp;
+  };
 
   return (
     <Box h="100%" maxW="100%">
@@ -46,6 +62,7 @@ export const Home = ({ data, columns }) => {
               type="text"
               placeholder="Search"
               style={{ borderRadius: '16px' }}
+              onChange={handleSearch}
             />
           </InputGroup>
         </Stack>
@@ -55,22 +72,15 @@ export const Home = ({ data, columns }) => {
             bg="gray.300"
             color="black"
             style={{ borderRadius: '16px' }}
-            w="199px"
+            w="225px"
             rightIcon={<FaChevronDown />}
           >
-            Cooked Before: {menuOption}
+            Cooked Before: {getButtonText(menuOption)}
           </MenuButton>
           <MenuList>
             <MenuItem onClick={() => setMenuOption('All')}>All</MenuItem>
-            <MenuItem onClick={() => setMenuOption('Last Week')}>
-              Last Week
-            </MenuItem>
-            <MenuItem onClick={() => setMenuOption('Last Month')}>
-              Last Month
-            </MenuItem>
-            <MenuItem onClick={() => setMenuOption('This Year')}>
-              This Year
-            </MenuItem>
+            <MenuItem onClick={() => setMenuOption('true')}>Active</MenuItem>
+            <MenuItem onClick={() => setMenuOption('false')}>Inactive</MenuItem>
           </MenuList>
         </Menu>
       </HStack>
@@ -83,14 +93,20 @@ export const Home = ({ data, columns }) => {
         mt={5}
       >
         <GridItem colSpan={12} rowSpan={1}>
-          <DataTable rows={data} />
+          <DataTable
+            rows={dataRows}
+            searchValue={searchText}
+            buttonFilter={menuOption}
+          />
         </GridItem>
       </Grid>
     </Box>
   );
 };
 
-const DataTable = ({ rows }) => {
+const DataTable = ({ rows, searchValue, buttonFilter }) => {
+  const [gridApi, setGridApi] = useState(null);
+  const [rowData, setRowData] = useState(rows);
   const gridOptions = {
     defaultColDef: {
       resizable: true,
@@ -99,13 +115,16 @@ const DataTable = ({ rows }) => {
       {
         field: 'id',
         hide: true,
+        getQuickFilterText: () => null,
       },
       {
         field: 'name',
         width: 498,
+        isFilterActive: true,
       },
       {
         field: 'reviews',
+        sortable: true,
         cellRendererFramework: params => (
           <ReactStars
             count={4}
@@ -118,6 +137,7 @@ const DataTable = ({ rows }) => {
             edit={false}
           />
         ),
+        getQuickFilterText: () => null,
       },
       {
         field: 'cooked',
@@ -136,19 +156,52 @@ const DataTable = ({ rows }) => {
       },
     ],
   };
-  const [rowData, setRowData] = useState(rows);
 
   useEffect(() => {
-    console.log("The rows: ", rows);
+    const selectBool = value => {
+      const instance = gridApi.getFilterInstance('name');
+      instance.setModel({
+        type: 'set',
+        values: ['Recipe 1', 'Recipe 2'],
+      });
+      gridApi.onFilterChanged();
+    };
+
+    const selectEverything = () => {
+      const instance = gridApi.getFilterInstance('cooked');
+      instance.setModel(null);
+      gridApi.onFilterChanged();
+    };
+
+    if (gridApi) {
+      if (buttonFilter !== 'All') {
+        console.log('useEffect en DataTable: ', buttonFilter === 'true');
+        selectBool(buttonFilter);
+      } else {
+        console.log("it's All");
+        selectEverything();
+      }
+    }
+  }, [buttonFilter, gridApi]);
+
+  useEffect(() => {
+    if (gridApi) gridApi.setQuickFilter(searchValue);
+  }, [searchValue, gridApi]);
+
+  useEffect(() => {
     setRowData(rows);
   }, [rows]);
+
+  function onGridReady(params) {
+    setGridApi(params.api);
+  }
 
   return (
     <div className="ag-theme-alpine" style={{ height: 400 }}>
       <AgGridReact
         rowData={rowData}
         gridOptions={gridOptions}
-        columnDefs={gridOptions.columnDefs}
+        onGridReady={onGridReady}
       />
     </div>
   );

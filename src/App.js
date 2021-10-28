@@ -176,16 +176,11 @@ const App = () => {
 
   const handleAdd = newData => {
     setRecipes(prev => {
-      var temp = prev;
+      var temp = [...prev];
       temp.push({ id: Recipes.length + 1, ...newData });
       return temp;
     });
-    console.log(Recipes);
   };
-
-  useEffect(() => {
-    console.log('cambio: ', Recipes);
-  }, [Recipes]);
 
   return (
     <ChakraProvider theme={theme}>
