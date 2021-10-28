@@ -34,6 +34,7 @@ export const Navbar = props => {
           aria-label={'Open Menu'}
           display={{ md: 'none' }}
           onClick={isOpen ? onClose : onOpen}
+          hidden
         />
         <HStack ml={2} spacing={8} alignItems={'center'}>
           <Image
@@ -50,7 +51,7 @@ export const Navbar = props => {
       </Flex>
 
       {isOpen ? (
-        <Box pb={4} display={{ md: 'none' }}>
+        <Box pb={4} display={{ md: 'none' }} hidden>
           <Stack as={'nav'} spacing={5}>
             <Link px={2} py={1} rounded={'md'} href={'#'}>
               Inicio

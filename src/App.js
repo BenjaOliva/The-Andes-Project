@@ -47,7 +47,11 @@ function App() {
           templateColumns="repeat(12, 1fr)"
           gap={2}
         >
-          <GridItem rowSpan={2} colSpan={3}>
+          <GridItem
+            display={{ base: 'none', md: 'flex' }}
+            rowSpan={2}
+            colSpan={3}
+          >
             <Image
               h="100%"
               style={{
@@ -123,7 +127,10 @@ const FloatingButton = () => {
 
               <Box>
                 <FormLabel htmlFor="desc">Preparation</FormLabel>
-                <Textarea id="desc" placeholder="Instructions: Write the steps..." />
+                <Textarea
+                  id="desc"
+                  placeholder="Instructions: Write the steps..."
+                />
               </Box>
 
               <FormControl as="fieldset">
@@ -140,13 +147,15 @@ const FloatingButton = () => {
 
               <Box>
                 <FormLabel htmlFor="desc">Cooked Before</FormLabel>
-                <Switch size="md" defaultChecked colorScheme="green"/>
+                <Switch size="md" defaultChecked colorScheme="green" />
               </Box>
             </Stack>
           </DrawerBody>
 
           <DrawerFooter>
-            <Button colorScheme="green" style={{borderRadius: "40px"}}>Create</Button>
+            <Button colorScheme="green" style={{ borderRadius: '40px' }}>
+              Create
+            </Button>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>

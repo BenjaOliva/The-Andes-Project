@@ -14,19 +14,11 @@ import {
   MenuItem,
   MenuList,
   MenuButton,
-  Table,
-  Thead,
-  Tbody,
-  Th,
-  Td,
-  Tr,
   HStack,
   LightMode
 } from '@chakra-ui/react';
-import { useTable, usePagination } from 'react-table';
 import { FaSearch, FaChevronDown } from 'react-icons/fa';
 import { AgGridReact } from 'ag-grid-react';
-import { DataGrid } from '@mui/x-data-grid';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import ReactStars from 'react-rating-stars-component';
