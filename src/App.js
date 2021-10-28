@@ -2,14 +2,18 @@ import React from 'react';
 import {
   ChakraProvider,
   Box,
+  IconButton,
   Grid,
+  Tooltip,
   GridItem,
   theme,
   Image,
+  Link,
 } from '@chakra-ui/react';
-import Home from './components/Main/Home';
+import { Home } from './components/Main/Home';
 import { Card } from './components/Main/Card';
 import { Navbar } from './components/Main/navbar';
+import { AddIcon } from '@chakra-ui/icons';
 
 function App() {
   return (
@@ -42,8 +46,31 @@ function App() {
           </GridItem>
         </Grid>
       </Box>
+      <FloatingButton />
     </ChakraProvider>
   );
 }
+
+const FloatingButton = () => (
+  <Link to="/#top">
+    <Box
+      position="fixed"
+      bottom="20px"
+      right={['16px', '84px', '84px', '84px', '50px']}
+      zIndex={2}
+    >
+      <Tooltip hasArrow label="Add Recipe!" placement="left" isOpen>
+        <IconButton
+          icon={<AddIcon />}
+          color="white"
+          colorScheme="cyan"
+          size="lg"
+          style={{ borderRadius: '100px 100px 100px 100px' }}
+          onClick={() => alert("Test")}
+        />
+      </Tooltip>
+    </Box>
+  </Link>
+);
 
 export default App;
