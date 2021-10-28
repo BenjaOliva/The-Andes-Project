@@ -1,5 +1,5 @@
-![Website](https://img.shields.io/website?up_message=online&url=https://crypto-blue-web.vercel.app/)
-![GitHub last commit](https://img.shields.io/github/last-commit/BenjaOliva/Crypto-Blue-Web?label=Ultimo%20Commit)
+![Website](https://img.shields.io/website?up_message=online&url=https://the-andes.vercel.app/)
+![GitHub last commit](https://img.shields.io/github/last-commit/BenjaOliva/The-Andes-Project?label=Ultimo%20Commit)
 
 # The Andes Project
 
