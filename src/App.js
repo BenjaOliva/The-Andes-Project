@@ -9,6 +9,7 @@ import {
   theme,
   Image,
   Link,
+  useColorModeValue
 } from '@chakra-ui/react';
 import { Home } from './components/Main/Home';
 import { Card } from './components/Main/Card';
@@ -51,26 +52,30 @@ function App() {
   );
 }
 
-const FloatingButton = () => (
-  <Link to="/#top">
-    <Box
-      position="fixed"
-      bottom="20px"
-      right={['16px', '84px', '84px', '84px', '50px']}
-      zIndex={2}
-    >
-      <Tooltip hasArrow label="Add Recipe!" placement="left" isOpen>
-        <IconButton
-          icon={<AddIcon />}
-          color="white"
-          colorScheme="cyan"
-          size="lg"
-          style={{ borderRadius: '100px 100px 100px 100px' }}
-          onClick={() => alert("Test")}
-        />
-      </Tooltip>
-    </Box>
-  </Link>
-);
+const FloatingButton = () => {
+  const color = useColorModeValue('white', 'gray.800');
+
+  return (
+    <Link to="/#top">
+      <Box
+        position="fixed"
+        bottom="20px"
+        right={['16px', '84px', '84px', '84px', '50px']}
+        zIndex={2}
+      >
+        <Tooltip hasArrow label="Add Recipe!" placement="left" isOpen>
+          <IconButton
+            icon={<AddIcon />}
+            color={color}
+            colorScheme="cyan"
+            size="lg"
+            style={{ borderRadius: '100px 100px 100px 100px' }}
+            onClick={() => alert('Test')}
+          />
+        </Tooltip>
+      </Box>
+    </Link>
+  );
+};
 
 export default App;

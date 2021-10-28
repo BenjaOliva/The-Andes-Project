@@ -21,6 +21,7 @@ import {
   Td,
   Tr,
   HStack,
+  LightMode
 } from '@chakra-ui/react';
 import { useTable, usePagination } from 'react-table';
 import { FaSearch, FaChevronDown } from 'react-icons/fa';
@@ -296,11 +297,13 @@ const Test = () => {
         type: 'rightAligned',
         cellRendererFramework: params => {
           return (
-            <Switch
-              colorScheme="green"
-              size="md"
-              defaultIsChecked={params.value}
-            />
+            <LightMode>
+              <Switch
+                colorScheme="green"
+                size="md"
+                defaultIsChecked={params.value}
+              />
+            </LightMode>
           );
         },
       },
