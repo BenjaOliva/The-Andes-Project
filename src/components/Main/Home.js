@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Text,
   Switch,
@@ -15,7 +15,7 @@ import {
   MenuList,
   MenuButton,
   HStack,
-  LightMode
+  LightMode,
 } from '@chakra-ui/react';
 import { FaSearch, FaChevronDown } from 'react-icons/fa';
 import { AgGridReact } from 'ag-grid-react';
@@ -23,8 +23,12 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import ReactStars from 'react-rating-stars-component';
 
-export function Home() {
+export const Home = ({ data, columns }) => {
   const [menuOption, setMenuOption] = useState('All');
+
+  useEffect(() => {
+   console.log("Data on home: ", data);
+  }, [data])
 
   return (
     <Box h="100%" maxW="100%">
@@ -38,7 +42,11 @@ export function Home() {
               pointerEvents="none"
               children={<FaSearch color="gray.100" />}
             />
-            <Input type="text" placeholder="Search" style={{borderRadius: "16px"}} />
+            <Input
+              type="text"
+              placeholder="Search"
+              style={{ borderRadius: '16px' }}
+            />
           </InputGroup>
         </Stack>
         <Menu>
@@ -46,7 +54,7 @@ export function Home() {
             as={Button}
             bg="gray.300"
             color="black"
-            style={{borderRadius: "16px"}}
+            style={{ borderRadius: '16px' }}
             w="199px"
             rightIcon={<FaChevronDown />}
           >
@@ -75,36 +83,14 @@ export function Home() {
         mt={5}
       >
         <GridItem colSpan={12} rowSpan={1}>
-          <Test />
+          <DataTable rows={data} />
         </GridItem>
       </Grid>
     </Box>
   );
-}
+};
 
-const Test = () => {
-  const rows = [
-    { id: 1, name: 'Recipe 1', reviews: 2, cooked: true },
-    { id: 2, name: 'Recipe 2', reviews: 4, cooked: false },
-    { id: 3, name: 'Recipe 3', reviews: 3, cooked: false },
-    { id: 4, name: 'Recipe 4', reviews: 1, cooked: true },
-    { id: 5, name: 'Recipe 5', reviews: 4, cooked: true },
-    { id: 6, name: 'Recipe 6', reviews: 4, cooked: false },
-    { id: 7, name: 'Recipe 7', reviews: 2, cooked: true },
-    { id: 8, name: 'Recipe 8', reviews: 4, cooked: false },
-    { id: 9, name: 'Recipe 9', reviews: 3, cooked: true },
-    { id: 10, name: 'Recipe 10', reviews: 2, cooked: true },
-    { id: 11, name: 'Recipe 11', reviews: 2, cooked: true },
-    { id: 12, name: 'Recipe 12', reviews: 4, cooked: false },
-    { id: 13, name: 'Recipe 13', reviews: 3, cooked: false },
-    { id: 14, name: 'Recipe 14', reviews: 1, cooked: true },
-    { id: 15, name: 'Recipe 15', reviews: 4, cooked: true },
-    { id: 16, name: 'Recipe 16', reviews: 4, cooked: false },
-    { id: 17, name: 'Recipe 17', reviews: 2, cooked: true },
-    { id: 18, name: 'Recipe 18', reviews: 4, cooked: false },
-    { id: 19, name: 'Recipe 19', reviews: 3, cooked: true },
-  ];
-
+const DataTable = ({ rows }) => {
   const gridOptions = {
     defaultColDef: {
       resizable: true,
@@ -150,11 +136,17 @@ const Test = () => {
       },
     ],
   };
+  const [rowData, setRowData] = useState(rows);
+
+  useEffect(() => {
+    console.log("The rows: ", rows);
+    setRowData(rows);
+  }, [rows]);
 
   return (
     <div className="ag-theme-alpine" style={{ height: 400 }}>
       <AgGridReact
-        rowData={rows}
+        rowData={rowData}
         gridOptions={gridOptions}
         columnDefs={gridOptions.columnDefs}
       />
