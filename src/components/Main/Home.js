@@ -32,13 +32,13 @@ export function Home() {
         Kitchen Recipes
       </Text>
       <HStack my={4}>
-        <Stack w="50%">
+        <Stack w="490px">
           <InputGroup>
             <InputLeftElement
               pointerEvents="none"
               children={<FaSearch color="gray.100" />}
             />
-            <Input type="text" placeholder="Search" />
+            <Input type="text" placeholder="Search" style={{borderRadius: "16px"}} />
           </InputGroup>
         </Stack>
         <Menu>
@@ -46,6 +46,8 @@ export function Home() {
             as={Button}
             bg="gray.300"
             color="black"
+            style={{borderRadius: "16px"}}
+            w="199px"
             rightIcon={<FaChevronDown />}
           >
             Cooked Before: {menuOption}
