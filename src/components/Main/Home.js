@@ -26,6 +26,8 @@ import {
   VStack,
   Switch,
   useToast,
+  UnorderedList,
+  ListItem,
 } from '@chakra-ui/react';
 import { FaSearch, FaChevronDown } from 'react-icons/fa';
 import { DataTableBasic } from './Datatable';
@@ -178,7 +180,7 @@ const RecipeInfoDrawer = ({ isOpen, onClose, data, allRecipes }) => {
       status: 'success',
       isClosable: true,
       position: 'top',
-      duration: 2700
+      duration: 2700,
     });
     setTimeout(() => {
       onClose();
@@ -196,15 +198,23 @@ const RecipeInfoDrawer = ({ isOpen, onClose, data, allRecipes }) => {
 
         <DrawerBody>
           <VStack paddingTop="40px" spacing="2" alignItems="flex-start">
-            <Heading as="h4" size="md">
+            <Heading as="h4" size="sm">
               Ingredients
             </Heading>
-            <Text noOfLines={[1, 2, 3]}>
-              Here would go all the items of the array from the object
-            </Text>
+            <Box marginLeft={5}>
+              <UnorderedList spacing={1} size="sm">
+                <ListItem>Ingredient number one.</ListItem>
+                <ListItem>
+                  Ingredient number two.(but this one is a bit larger so you can
+                  see the text endline)
+                </ListItem>
+                <ListItem>Ingredient number 3.</ListItem>
+                <ListItem>Ingredient 4</ListItem>
+              </UnorderedList>
+            </Box>
           </VStack>
           <VStack paddingTop="40px" spacing="2" alignItems="flex-start">
-            <Heading as="h4" size="md">
+            <Heading as="h4" size="sm">
               Preparation
             </Heading>
             <Text as="p" fontSize="md">
@@ -212,7 +222,7 @@ const RecipeInfoDrawer = ({ isOpen, onClose, data, allRecipes }) => {
             </Text>
           </VStack>
           <VStack paddingTop="40px" spacing="2" alignItems="flex-start">
-            <Heading as="h3" size="md">
+            <Heading as="h3" size="sm">
               Reviews
             </Heading>
             <Rating
@@ -224,7 +234,7 @@ const RecipeInfoDrawer = ({ isOpen, onClose, data, allRecipes }) => {
             />
           </VStack>
           <VStack paddingTop="40px" spacing="2" alignItems="flex-start">
-            <Heading as="h3" size="md">
+            <Heading as="h3" size="sm">
               Cooked before
             </Heading>
             <Switch

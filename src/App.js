@@ -29,6 +29,8 @@ import {
   RadioGroup,
   HStack,
   useToast,
+  InputGroup,
+  InputRightElement,
 } from '@chakra-ui/react';
 import { Home } from './components/Main/Home';
 import { Card } from './components/Main/Card';
@@ -44,6 +46,11 @@ const App = () => {
   useEffect(() => {
     productService.getProductsSmall().then(data => setRecipes(data));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    console.log(Recipes);
+  }, [Recipes]); // eslint-disable-line react-hooks/exhaustive-deps
+
 
   const handleAdd = newData => {
     setRecipes(prev => {
@@ -105,6 +112,7 @@ const FloatingButton = ({ handleAdd }) => {
   const [newRecipe, setNewRecipe] = useState({
     name: '',
     instructions: '',
+    ingredients: [],
     reviews: '1',
     cooked: false,
   });
@@ -198,6 +206,11 @@ const FloatingButton = ({ handleAdd }) => {
                 </FormControl>
 
                 <FormControl>
+                  <FormLabel htmlFor="desc">Ingredients</FormLabel>
+                  <IngredientsFields />
+                </FormControl>
+
+                <FormControl>
                   <FormLabel htmlFor="desc">Preparation</FormLabel>
                   <Textarea
                     id="desc"
@@ -259,5 +272,25 @@ const FloatingButton = ({ handleAdd }) => {
     </>
   );
 };
+
+function IngredientsFields() {
+  const [show, setShow] = React.useState(false);
+  const handleClick = () => setShow(!show);
+
+  return (
+    <InputGroup size="md">
+      <Input
+        pr="4.5rem"
+        type="text"
+        placeholder="Write the ingredient..."
+      />
+      <InputRightElement width="4.5rem">
+        <Button h="1.75rem" size="sm" colorScheme="green" onClick={handleClick}>
+          Add
+        </Button>
+      </InputRightElement>
+    </InputGroup>
+  );
+}
 
 export default App;
