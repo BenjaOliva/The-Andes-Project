@@ -142,6 +142,7 @@ const RecipeInfoDrawer = ({ isOpen, onClose, data, allRecipes }) => {
     name: 'test',
     reviews: 1,
     instructions: 'No info',
+    ingredients: [],
     cooked: false,
   });
 
@@ -203,13 +204,9 @@ const RecipeInfoDrawer = ({ isOpen, onClose, data, allRecipes }) => {
             </Heading>
             <Box marginLeft={5}>
               <UnorderedList spacing={1} size="sm">
-                <ListItem>Ingredient number one.</ListItem>
-                <ListItem>
-                  Ingredient number two.(but this one is a bit larger so you can
-                  see the text endline)
-                </ListItem>
-                <ListItem>Ingredient number 3.</ListItem>
-                <ListItem>Ingredient 4</ListItem>
+                {recipeObject.ingredients.map(element => (
+                  <ListItem key={element}>{element}</ListItem>
+                ))}
               </UnorderedList>
             </Box>
           </VStack>

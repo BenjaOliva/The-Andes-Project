@@ -4,6 +4,7 @@ import {
   Box,
   IconButton,
   Grid,
+  VStack,
   Tooltip,
   GridItem,
   theme,
@@ -35,7 +36,7 @@ import {
 import { Home } from './components/Main/Home';
 import { Card } from './components/Main/Card';
 import { Navbar } from './components/Main/navbar';
-import { AddIcon } from '@chakra-ui/icons';
+import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import { ProductService } from './components/Main/ProductsService';
 
 const App = () => {
@@ -46,11 +47,6 @@ const App = () => {
   useEffect(() => {
     productService.getProductsSmall().then(data => setRecipes(data));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    console.log(Recipes);
-  }, [Recipes]); // eslint-disable-line react-hooks/exhaustive-deps
-
 
   const handleAdd = newData => {
     setRecipes(prev => {
@@ -126,15 +122,14 @@ const FloatingButton = ({ handleAdd }) => {
   };
 
   const handleSave = e => {
-    e.preventDefault();
     onClose();
 
     const objToAdd = newRecipe;
-    document.getElementById('newRecipe-form').reset();
 
     setNewRecipe({
       name: '',
       instructions: '',
+      ingredients: [],
       reviews: '1',
       cooked: false,
     });
@@ -156,6 +151,19 @@ const FloatingButton = ({ handleAdd }) => {
     handleAdd(objToAdd);
   };
 
+  const handleRemove = value => {
+    var temp = [...newRecipe.ingredients];
+    var index = newRecipe.ingredients.indexOf(value);
+    temp.splice(index, 1);
+    setNewRecipe(prev => ({ ...prev, ingredients: temp }));
+  };
+
+  const handleAddIngredient = value => {
+    var temp = [...newRecipe.ingredients];
+    temp.push(value);
+    setNewRecipe(prev => ({ ...prev, ingredients: temp }));
+  };
+
   return (
     <>
       <Link>
@@ -163,7 +171,7 @@ const FloatingButton = ({ handleAdd }) => {
           position="fixed"
           bottom="20px"
           right={['16px', '84px', '84px', '84px', '50px']}
-          zIndex={2}
+          zIndex={1}
         >
           <Tooltip hasArrow label="Add Recipe!" placement="left">
             <IconButton
@@ -179,24 +187,18 @@ const FloatingButton = ({ handleAdd }) => {
       </Link>
       <Drawer
         isOpen={isOpen}
-        placement="right"
         size="sm"
         onClose={onClose}
-        finalFocusRef={btnRef}
-        initialFocusRef={firstField}
-        zIndex={1001}
       >
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
           <DrawerHeader>New Recipe</DrawerHeader>
-          <form id="newRecipe-form" onSubmit={handleSave}>
             <DrawerBody>
-              <Stack spacing="24px">
+              <VStack paddingTop="10px" spacing="2" alignItems="flex-start">
                 <FormControl>
                   <FormLabel htmlFor="username">Recipe Name</FormLabel>
                   <Input
-                    ref={firstField}
                     id="recipe-name"
                     name="name"
                     placeholder="Please enter user name"
@@ -204,12 +206,25 @@ const FloatingButton = ({ handleAdd }) => {
                     isRequired
                   />
                 </FormControl>
-
+              </VStack>
+              <VStack paddingTop="30px" spacing="2" alignItems="flex-start">
                 <FormControl>
                   <FormLabel htmlFor="desc">Ingredients</FormLabel>
-                  <IngredientsFields />
+                  <VStack>
+                    {newRecipe.ingredients.map(value => (
+                      <IngredientsAdded
+                        key={value}
+                        value={value}
+                        handleRemove={handleRemove}
+                      />
+                    ))}
+                    <IngredientsFields
+                      handleAddIngredient={handleAddIngredient}
+                    />
+                  </VStack>
                 </FormControl>
-
+              </VStack>
+              <VStack paddingTop="30px" spacing="2" alignItems="flex-start">
                 <FormControl>
                   <FormLabel htmlFor="desc">Preparation</FormLabel>
                   <Textarea
@@ -220,7 +235,8 @@ const FloatingButton = ({ handleAdd }) => {
                     isRequired
                   />
                 </FormControl>
-
+              </VStack>
+              <VStack paddingTop="30px" spacing="2" alignItems="flex-start">
                 <FormControl as="fieldset">
                   <FormLabel as="legend">Reviews</FormLabel>
                   <RadioGroup
@@ -237,13 +253,14 @@ const FloatingButton = ({ handleAdd }) => {
                     </HStack>
                   </RadioGroup>
                 </FormControl>
-
+              </VStack>
+              <VStack paddingTop="30px" spacing="2" alignItems="flex-start">
                 <FormControl>
                   <FormLabel htmlFor="cooked">Cooked Before</FormLabel>
                   <Switch
                     id="cooked"
-                    size="md"
-                    isChecked={newRecipe.cooked}
+                    size="lg"
+                    defaultChecked={newRecipe.cooked}
                     colorScheme="green"
                     name="cooked"
                     value={newRecipe.cooked}
@@ -255,37 +272,67 @@ const FloatingButton = ({ handleAdd }) => {
                     }}
                   />
                 </FormControl>
-              </Stack>
+              </VStack>
             </DrawerBody>
-            <DrawerFooter>
+            <DrawerFooter bg="gray.100">
               <Button
-                type="submit"
-                colorScheme="green"
-                style={{ borderRadius: '40px' }}
+                colorScheme="teal"
+                w="95px"
+                style={{ borderRadius: '25px' }}
+                size="lg"
+                onClick={handleSave}
               >
                 Create
               </Button>
             </DrawerFooter>
-          </form>
         </DrawerContent>
       </Drawer>
     </>
   );
 };
 
-function IngredientsFields() {
-  const [show, setShow] = React.useState(false);
-  const handleClick = () => setShow(!show);
+function IngredientsAdded({ value, handleRemove }) {
+  return (
+    <InputGroup size="md">
+      <Input
+        style={{ color: 'black' }}
+        pr="4.5rem"
+        type="text"
+        value={value}
+        placeholder="Write the ingredient..."
+        disabled
+      />
+      <InputRightElement width="4.5rem">
+        <IconButton
+          h="1.75rem"
+          colorScheme="red"
+          aria-label="Delete element"
+          icon={<DeleteIcon onClick={() => handleRemove(value)} />}
+        />
+      </InputRightElement>
+    </InputGroup>
+  );
+}
+
+function IngredientsFields({ handleAddIngredient }) {
+  const [value, setValue] = useState();
+
+  function save() {
+    handleAddIngredient(value);
+    setValue('');
+  }
 
   return (
     <InputGroup size="md">
       <Input
+        onChange={e => setValue(e.target.value)}
+        value={value}
         pr="4.5rem"
         type="text"
         placeholder="Write the ingredient..."
       />
       <InputRightElement width="4.5rem">
-        <Button h="1.75rem" size="sm" colorScheme="green" onClick={handleClick}>
+        <Button h="1.75rem" size="sm" colorScheme="green" onClick={save}>
           Add
         </Button>
       </InputRightElement>
