@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   Text,
-  Switch,
   Stack,
   Box,
   Button,
@@ -15,18 +14,29 @@ import {
   MenuList,
   MenuButton,
   HStack,
-  LightMode,
+  useDisclosure,
+  Drawer,
+  DrawerBody,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  DrawerFooter,
+  Heading,
+  VStack,
+  Switch,
+  useToast,
 } from '@chakra-ui/react';
 import { FaSearch, FaChevronDown } from 'react-icons/fa';
-import { AgGridReact } from 'ag-grid-react';
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
-import ReactStars from 'react-rating-stars-component';
+import { DataTableBasic } from './Datatable';
+import { Rating } from 'primereact/rating';
 
 export const Home = ({ data }) => {
-  const [menuOption, setMenuOption] = useState('All');
+  const [menuOption, setMenuOption] = useState('');
   const [searchText, setSearchText] = useState();
   const [dataRows, setDataRows] = useState(data);
+  const [recipeInfo, setRecipeInfo] = useState();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     setDataRows(data);
@@ -36,9 +46,14 @@ export const Home = ({ data }) => {
     setSearchText(e.target.value);
   };
 
+  const openRecipe = data => {
+    setRecipeInfo(data);
+    onOpen();
+  };
+
   const getButtonText = value => {
     var temp;
-    if (value !== 'All') {
+    if (value !== '') {
       value === 'true' ? (temp = 'Active') : (temp = 'Inactive');
     } else {
       temp = 'All';
@@ -47,162 +62,192 @@ export const Home = ({ data }) => {
   };
 
   return (
-    <Box h="100%" maxW="100%">
-      <Text fontSize="3xl" as="strong" w="100%">
-        Kitchen Recipes
-      </Text>
-      <HStack my={4}>
-        <Stack w="490px">
-          <InputGroup>
-            <InputLeftElement
-              pointerEvents="none"
-              children={<FaSearch color="gray.100" />}
-            />
-            <Input
-              type="text"
-              placeholder="Search"
+    <>
+      <Box h="100%">
+        <Text fontSize="3xl" as="strong" w="100%">
+          Kitchen Recipes
+        </Text>
+        <HStack my={4}>
+          <Stack w="50%">
+            <InputGroup w="100%">
+              <InputLeftElement
+                pointerEvents="none"
+                children={<FaSearch color="gray.100" />}
+              />
+              <Input
+                type="text"
+                placeholder="Search"
+                style={{ borderRadius: '16px' }}
+                onChange={handleSearch}
+              />
+            </InputGroup>
+          </Stack>
+          <Menu w="50%">
+            <MenuButton
+              as={Button}
+              bg="gray.300"
+              color="black"
               style={{ borderRadius: '16px' }}
-              onChange={handleSearch}
+              rightIcon={<FaChevronDown />}
+            >
+              <Text fontSize="sm">
+                Cooked Before: {getButtonText(menuOption)}
+              </Text>
+            </MenuButton>
+            <MenuList>
+              <MenuItem onClick={() => setMenuOption('')}>All</MenuItem>
+              <MenuItem onClick={() => setMenuOption('true')}>Active</MenuItem>
+              <MenuItem onClick={() => setMenuOption('false')}>
+                Inactive
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        </HStack>
+        <Grid
+          h="100%"
+          maxW="100%"
+          templateRows="repeat(2, 1fr)"
+          templateColumns="repeat(12, 1fr)"
+          gap={2}
+          mt={5}
+        >
+          <GridItem colSpan={12} rowSpan={1}>
+            <DataTableBasic
+              dataRows={dataRows}
+              searchText={searchText}
+              cookedFilter={menuOption}
+              openRecipeDrawer={openRecipe}
             />
-          </InputGroup>
-        </Stack>
-        <Menu>
-          <MenuButton
-            as={Button}
-            bg="gray.300"
-            color="black"
-            style={{ borderRadius: '16px' }}
-            w="225px"
-            rightIcon={<FaChevronDown />}
-          >
-            Cooked Before: {getButtonText(menuOption)}
-          </MenuButton>
-          <MenuList>
-            <MenuItem onClick={() => setMenuOption('All')}>All</MenuItem>
-            <MenuItem onClick={() => setMenuOption('true')}>Active</MenuItem>
-            <MenuItem onClick={() => setMenuOption('false')}>Inactive</MenuItem>
-          </MenuList>
-        </Menu>
-      </HStack>
-      <Grid
-        h="100%"
-        maxW="100%"
-        templateRows="repeat(2, 1fr)"
-        templateColumns="repeat(12, 1fr)"
-        gap={2}
-        mt={5}
-      >
-        <GridItem colSpan={12} rowSpan={1}>
-          <DataTable
-            rows={dataRows}
-            searchValue={searchText}
-            buttonFilter={menuOption}
-          />
-        </GridItem>
-      </Grid>
-    </Box>
+          </GridItem>
+        </Grid>
+      </Box>
+      <RecipeInfoDrawer
+        isOpen={isOpen}
+        onClose={onClose}
+        data={recipeInfo}
+        allRecipes={dataRows}
+      />
+    </>
   );
 };
 
-const DataTable = ({ rows, searchValue, buttonFilter }) => {
-  const [gridApi, setGridApi] = useState(null);
-  const [rowData, setRowData] = useState(rows);
-  const gridOptions = {
-    defaultColDef: {
-      resizable: true,
-    },
-    columnDefs: [
-      {
-        field: 'id',
-        hide: true,
-        getQuickFilterText: () => null,
-      },
-      {
-        field: 'name',
-        width: 498,
-        isFilterActive: true,
-      },
-      {
-        field: 'reviews',
-        sortable: true,
-        cellRendererFramework: params => (
-          <ReactStars
-            count={4}
-            size={25}
-            value={params.value}
-            isHalf={false}
-            emptyIcon={<i className="far fa-star"></i>}
-            fullIcon={<i className="fa fa-star"></i>}
-            activeColor="#FFD19A"
-            edit={false}
-          />
-        ),
-        getQuickFilterText: () => null,
-      },
-      {
-        field: 'cooked',
-        type: 'rightAligned',
-        cellRendererFramework: params => {
-          return (
-            <LightMode>
-              <Switch
-                colorScheme="green"
-                size="md"
-                defaultIsChecked={params.value}
-              />
-            </LightMode>
-          );
-        },
-      },
-    ],
-  };
+const RecipeInfoDrawer = ({ isOpen, onClose, data, allRecipes }) => {
+  const toast = useToast();
+  const [AllDataRows, setAllData] = useState(allRecipes);
+
+  const [recipeObject, setRecipeObject] = useState({
+    id: 0,
+    name: 'test',
+    reviews: 1,
+    instructions: 'No info',
+    cooked: false,
+  });
 
   useEffect(() => {
-    const selectBool = value => {
-      const instance = gridApi.getFilterInstance('name');
-      instance.setModel({
-        type: 'set',
-        values: ['Recipe 1', 'Recipe 2'],
-      });
-      gridApi.onFilterChanged();
-    };
-
-    const selectEverything = () => {
-      const instance = gridApi.getFilterInstance('cooked');
-      instance.setModel(null);
-      gridApi.onFilterChanged();
-    };
-
-    if (gridApi) {
-      if (buttonFilter !== 'All') {
-        console.log('useEffect en DataTable: ', buttonFilter === 'true');
-        selectBool(buttonFilter);
-      } else {
-        console.log("it's All");
-        selectEverything();
-      }
+    if (allRecipes !== undefined) {
+      setAllData(allRecipes);
     }
-  }, [buttonFilter, gridApi]);
+  }, [allRecipes]);
 
-  useEffect(() => {
-    if (gridApi) gridApi.setQuickFilter(searchValue);
-  }, [searchValue, gridApi]);
-
-  useEffect(() => {
-    setRowData(rows);
-  }, [rows]);
-
-  function onGridReady(params) {
-    setGridApi(params.api);
+  function closeAndToast() {
+    onClose();
+    toast({
+      title: `This function isn't ready.. yet!`,
+      description: 'If all goes well, you will se this feature soon ;)',
+      status: 'info',
+      isClosable: true,
+      position: 'top',
+    });
   }
 
+  useEffect(() => {
+    if (data !== undefined) {
+      setRecipeObject(data);
+    }
+  }, [data]);
+
+  const updateRecipe = e => {
+    var temp = [...AllDataRows];
+    temp[temp.findIndex(e => e.id === recipeObject.id)].cooked =
+      !recipeObject.cooked;
+    toast({
+      title: `The recipe has been saved!`,
+      description: temp[temp.findIndex(e => e.id === recipeObject.id)].cooked
+        ? 'The recipe has been marked as cooked.'
+        : 'The cooked field has been unmarked.',
+      status: 'success',
+      isClosable: true,
+      position: 'top',
+      duration: 2700
+    });
+    setTimeout(() => {
+      onClose();
+    }, 800);
+  };
+
   return (
-    <div className="ag-theme-alpine" style={{ height: 400 }}>
-      <AgGridReact
-        rowData={rowData}
-        gridOptions={gridOptions}
-        onGridReady={onGridReady}
-      />
-    </div>
+    <Drawer onClose={onClose} isOpen={isOpen} size="sm">
+      <DrawerOverlay />
+      <DrawerContent>
+        <DrawerCloseButton />
+        <DrawerHeader style={{ fontSize: '24px' }} bg="gray.100">
+          <strong>{recipeObject.name}</strong>
+        </DrawerHeader>
+
+        <DrawerBody>
+          <VStack paddingTop="40px" spacing="2" alignItems="flex-start">
+            <Heading as="h4" size="md">
+              Ingredients
+            </Heading>
+            <Text noOfLines={[1, 2, 3]}>
+              Here would go all the items of the array from the object
+            </Text>
+          </VStack>
+          <VStack paddingTop="40px" spacing="2" alignItems="flex-start">
+            <Heading as="h4" size="md">
+              Preparation
+            </Heading>
+            <Text as="p" fontSize="md">
+              {recipeObject.instructions}
+            </Text>
+          </VStack>
+          <VStack paddingTop="40px" spacing="2" alignItems="flex-start">
+            <Heading as="h3" size="md">
+              Reviews
+            </Heading>
+            <Rating
+              disabled
+              value={recipeObject.reviews}
+              stars={4}
+              readOnly
+              cancel={false}
+            />
+          </VStack>
+          <VStack paddingTop="40px" spacing="2" alignItems="flex-start">
+            <Heading as="h3" size="md">
+              Cooked before
+            </Heading>
+            <Switch
+              size="lg"
+              colorScheme="green"
+              defaultChecked={recipeObject.cooked}
+              onChange={updateRecipe}
+            />
+          </VStack>
+        </DrawerBody>
+
+        <DrawerFooter bg="gray.100">
+          <Button
+            colorScheme="teal"
+            w="95px"
+            style={{ borderRadius: '25px' }}
+            onClick={closeAndToast}
+            size="lg"
+          >
+            Edit
+          </Button>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   );
 };
