@@ -19,9 +19,13 @@
 
 ## Description
 
-This web app corresponds for the "Basic Challenge" for Tinkin's Test but with a few additions.
+This web app corresponds for the "Basic Challenge" for Tinkin's Test but with almost all the "Advanced Test" requirements.
 
 Live Demo: [https://the-andes.vercel.app/](https://the-andes.vercel.app/)
+
+Or
+
+Go to the [Installation](#installation) guide.
 
 ## Project Details
 

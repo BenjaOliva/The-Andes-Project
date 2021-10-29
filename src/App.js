@@ -101,8 +101,6 @@ const App = () => {
 const FloatingButton = ({ handleAdd }) => {
   const color = useColorModeValue('white', 'gray.800');
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const btnRef = React.useRef();
-  const firstField = React.useRef();
   const toast = useToast();
   const [reviewValue, setReviewValue] = useState('1');
   const [newRecipe, setNewRecipe] = useState({
