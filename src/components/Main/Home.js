@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import _ from "lodash";
 import {
   Text,
   Stack,
@@ -44,9 +45,10 @@ export const Home = ({ data }) => {
     setDataRows(data);
   }, [data]);
 
-  const handleSearch = e => {
+  const slowState = (e) => {
+    console.log("The value debounced:", e.target.value);
     setSearchText(e.target.value);
-  };
+  }
 
   const openRecipe = data => {
     setRecipeInfo(data);
@@ -80,7 +82,7 @@ export const Home = ({ data }) => {
                 type="text"
                 placeholder="Search"
                 style={{ borderRadius: '16px' }}
-                onChange={handleSearch}
+                onChange={_.debounce((e) => slowState(e), 500)}
               />
             </InputGroup>
           </Stack>
